@@ -19,6 +19,14 @@ body,
   height: 100%;
 }
 
+/* Reserve the vertical scrollbar gutter on every page so centered/fixed
+   content (notably the navbar LOGO) doesn't shift when navigating between
+   short pages (no scrollbar) and tall pages (scrollbar). */
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family:
@@ -156,11 +164,6 @@ a {
   background-position:
     0 0,
     3px 3px;
-}
-
-/* Smooth scroll for in-page anchors */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Hide scrollbar on mobile overlay */
