@@ -1,9 +1,9 @@
 // Imperative pan/zoom/rotate controller for an image viewer.
 // Supports: wheel zoom, drag-to-pan, pinch zoom (touch), and rotation.
 //
-// State is kept in refs + a counter so re-renders are cheap — only the
-// transform string re-renders on each interaction, the underlying <img>
-// stays mounted.
+// The wheel listener is attached via a callback ref so it binds at the
+// exact moment the viewer element mounts. The pointer listeners live on
+// React props so they re-attach on every render automatically.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -22,19 +22,28 @@ function distance(a, b) {
 }
 
 export function useImageViewer() {
-  const [transform, setTransform] = useState({ scale: 1, x: 0, y: 0, rot: 0 });
-  const [_, force] = useState(0);
-  const rerender = () => force((n) => n + 1);
+  // Single source of truth: React state. We render directly from it.
+  const [transform, setTransform] = useState({
+    scale: 1,
+    x: 0,
+    y: 0,
+    rot: 0,
+  });
 
-  // Working state held in refs so event handlers don't capture stale values.
+  // Mirror in a ref so event handlers always read the latest values
+  // without re-binding on every render.
   const stateRef = useRef({ scale: 1, x: 0, y: 0, rot: 0 });
+  useEffect(() => {
+    stateRef.current = transform;
+  }, [transform]);
+
   const containerRef = useRef(null);
   const pointersRef = useRef(new Map()); // pointerId -> {x, y}
   const pinchStartRef = useRef(null); // {dist, scale}
-  const panStartRef = useRef(null); // {x, y, startX, startY}
+  const panStartRef = useRef(null); // {startX, startY, startTx, startTy}
 
-  const commit = useCallback(() => {
-    setTransform({ ...stateRef.current });
+  const commit = useCallback((patch = {}) => {
+    setTransform((prev) => ({ ...prev, ...patch }));
   }, []);
 
   const setScaleAround = useCallback(
@@ -42,42 +51,48 @@ export function useImageViewer() {
       const s = stateRef.current;
       const clamped = clamp(newScale, MIN_SCALE, MAX_SCALE);
       if (clamped === s.scale) return;
-      // Keep the point under the cursor stationary while zooming.
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) {
-        s.scale = clamped;
-        commit();
+      const el = containerRef.current;
+      if (!el) {
+        commit({ scale: clamped });
         return;
       }
+      const rect = el.getBoundingClientRect();
       const cx = originX ?? rect.width / 2;
       const cy = originY ?? rect.height / 2;
       const ratio = clamped / s.scale;
-      s.x = cx - (cx - s.x) * ratio;
-      s.y = cy - (cy - s.y) * ratio;
-      s.scale = clamped;
-      commit();
+      const nx = cx - (cx - s.x) * ratio;
+      const ny = cy - (cy - s.y) * ratio;
+      commit({ scale: clamped, x: nx, y: ny });
     },
     [commit],
   );
 
   const reset = useCallback(() => {
-    stateRef.current = { scale: 1, x: 0, y: 0, rot: 0 };
-    commit();
+    commit({ scale: 1, x: 0, y: 0, rot: 0 });
   }, [commit]);
 
   const zoomIn = useCallback(() => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    setScaleAround(stateRef.current.scale + ZOOM_STEP, rect?.width / 2, rect?.height / 2);
+    const el = containerRef.current;
+    const rect = el?.getBoundingClientRect();
+    setScaleAround(
+      stateRef.current.scale + ZOOM_STEP,
+      rect ? rect.width / 2 : undefined,
+      rect ? rect.height / 2 : undefined,
+    );
   }, [setScaleAround]);
 
   const zoomOut = useCallback(() => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    setScaleAround(stateRef.current.scale - ZOOM_STEP, rect?.width / 2, rect?.height / 2);
+    const el = containerRef.current;
+    const rect = el?.getBoundingClientRect();
+    setScaleAround(
+      stateRef.current.scale - ZOOM_STEP,
+      rect ? rect.width / 2 : undefined,
+      rect ? rect.height / 2 : undefined,
+    );
   }, [setScaleAround]);
 
   const rotate = useCallback(() => {
-    stateRef.current.rot = (stateRef.current.rot + 90) % 360;
-    commit();
+    commit({ rot: (stateRef.current.rot + 90) % 360 });
   }, [commit]);
 
   // ------- Pointer / mouse handlers -------
@@ -92,8 +107,9 @@ export function useImageViewer() {
         scale: stateRef.current.scale,
       };
       panStartRef.current = null;
-    } else if (pointersRef.current.size === 1 && stateRef.current.scale > 1) {
-      // Pan with single pointer only when zoomed in.
+    } else if (pointersRef.current.size === 1) {
+      // Pan is allowed at any zoom level — lets the user slide the work
+      // around the frame even before committing to a magnification.
       const p = pointersRef.current.get(e.pointerId);
       panStartRef.current = {
         startX: p.x,
@@ -112,26 +128,24 @@ export function useImageViewer() {
       if (pointersRef.current.size === 2 && pinchStartRef.current) {
         const [a, b] = [...pointersRef.current.values()];
         const d = distance(a, b);
-        const newScale = pinchStartRef.current.scale * (d / pinchStartRef.current.dist);
-        // Pinch zooms about the midpoint of the two fingers.
+        const newScale =
+          pinchStartRef.current.scale * (d / pinchStartRef.current.dist);
+        const el = containerRef.current;
+        const rect = el?.getBoundingClientRect();
         setScaleAround(
           newScale,
-          (a.x + b.x) / 2 - containerRef.current.getBoundingClientRect().left,
-          (a.y + b.y) / 2 - containerRef.current.getBoundingClientRect().top,
+          rect ? (a.x + b.x) / 2 - rect.left : undefined,
+          rect ? (a.y + b.y) / 2 - rect.top : undefined,
         );
-      } else if (
-        pointersRef.current.size === 1 &&
-        panStartRef.current &&
-        stateRef.current.scale > 1
-      ) {
+      } else if (pointersRef.current.size === 1 && panStartRef.current) {
         const p = pointersRef.current.get(e.pointerId);
-        const s = stateRef.current;
-        s.x = panStartRef.current.startTx + (p.x - panStartRef.current.startX);
-        s.y = panStartRef.current.startTy + (p.y - panStartRef.current.startY);
-        rerender();
+        commit({
+          x: panStartRef.current.startTx + (p.x - panStartRef.current.startX),
+          y: panStartRef.current.startTy + (p.y - panStartRef.current.startY),
+        });
       }
     },
-    [setScaleAround],
+    [commit, setScaleAround],
   );
 
   const onPointerUp = useCallback((e) => {
@@ -141,27 +155,57 @@ export function useImageViewer() {
   }, []);
 
   // ------- Wheel zoom (desktop) -------
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const onWheel = (e) => {
-      e.preventDefault();
-      const rect = el.getBoundingClientRect();
-      const delta = -e.deltaY * 0.0015;
-      setScaleAround(stateRef.current.scale * (1 + delta), e.clientX - rect.left, e.clientY - rect.top);
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, [setScaleAround]);
+  // Callback ref guarantees the listener is attached exactly when the
+  // viewer element mounts — no race with the modal's conditional render.
+  const containerCallbackRef = useCallback(
+    (el) => {
+      // Tear down the previous binding (if any) so re-mounts don't leak.
+      if (containerRef.current && containerRef.current._wheelHandler) {
+        containerRef.current.removeEventListener(
+          'wheel',
+          containerRef.current._wheelHandler,
+        );
+      }
+      containerRef.current = el;
+      if (!el) return;
+      const onWheel = (e) => {
+        e.preventDefault();
+        const rect = el.getBoundingClientRect();
+        const delta = -e.deltaY * 0.0015;
+        setScaleAround(
+          stateRef.current.scale * (1 + delta),
+          e.clientX - rect.left,
+          e.clientY - rect.top,
+        );
+      };
+      el.addEventListener('wheel', onWheel, { passive: false });
+      el._wheelHandler = onWheel;
+    },
+    [setScaleAround],
+  );
 
-  const cursor =
-    stateRef.current.scale > 1 ? (panStartRef.current ? 'grabbing' : 'grab') : 'zoom-in';
+  // Cleanup on unmount.
+  useEffect(() => {
+    return () => {
+      const el = containerRef.current;
+      if (el && el._wheelHandler) {
+        el.removeEventListener('wheel', el._wheelHandler);
+      }
+    };
+  }, []);
+
+  // Always grabbable so the affordance is visible from the start.
+  const cursor = panStartRef.current ? 'grabbing' : 'grab';
 
   return {
     transform,
-    stateRef,
-    containerRef,
-    handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp },
+    containerCallbackRef,
+    handlers: {
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+      onPointerCancel: onPointerUp,
+    },
     cursor,
     actions: { zoomIn, zoomOut, rotate, reset },
   };

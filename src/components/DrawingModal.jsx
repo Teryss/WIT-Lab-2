@@ -49,8 +49,9 @@ export default function DrawingModal({ drawing, open, onClose }) {
     >
       <div className="grid lg:grid-cols-[1.4fr,1fr]">
         <div className="bg-canvas-muted p-4 md:p-6 relative">
-          {/* Toolbar */}
-          <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+          {/* Toolbar — pushed left of the modal's close button so the two
+              never collide on narrow viewports. */}
+          <div className="absolute top-3 right-14 sm:right-3 z-10 flex items-center gap-2">
             <button
               type="button"
               onClick={viewer.actions.zoomOut}
@@ -87,7 +88,7 @@ export default function DrawingModal({ drawing, open, onClose }) {
 
           {/* Viewer surface — captures wheel/pointer events. */}
           <div
-            ref={viewer.containerRef}
+            ref={viewer.containerCallbackRef}
             {...viewer.handlers}
             className="relative overflow-hidden max-h-[70vh] h-[60vh] lg:h-[70vh] bg-white rounded-xl border border-neutral-200 touch-none select-none"
             style={{ cursor: viewer.cursor }}
@@ -110,7 +111,7 @@ export default function DrawingModal({ drawing, open, onClose }) {
 
             {scale <= 1.01 ? (
               <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-wider text-neutral-500 bg-white/80 px-2 py-1 rounded-full pointer-events-none">
-                Scroll, pinch, or drag to zoom
+                Drag to pan · scroll or pinch to zoom
               </p>
             ) : null}
           </div>
