@@ -20,15 +20,17 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
         >
           Search (Author / Title)
         </label>
-        <div className="mt-2 relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-          />
+        <div className="mt-2 flex items-stretch rounded-[10px] border border-neutral-200 bg-white overflow-hidden focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15">
+          <span
+            aria-hidden="true"
+            className="flex items-center justify-center w-11 shrink-0 text-neutral-400"
+          >
+            <Search size={16} />
+          </span>
           <input
             id={idQ}
             type="search"
-            className="form-control-clean pl-9"
+            className="flex-1 bg-transparent py-2.5 pr-3 text-sm outline-none placeholder:text-neutral-400"
             placeholder="e.g., Study…"
             value={filters.query}
             onChange={(e) => update({ query: e.target.value })}
