@@ -23,7 +23,7 @@ export default function DrawingCard({ drawing, onOpen }) {
           {author.firstName} {author.lastName}
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
-          <span className="tag-pill">Semester {semester}</span>
+          <span className="tag-pill">Semestr {semester}</span>
           <span className="tag-pill">{technique}</span>
           <span className="tag-pill">{supervisor}</span>
         </div>
