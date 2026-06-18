@@ -11,14 +11,14 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
 
   return (
     <aside className="bg-white border border-neutral-200 rounded-2xl shadow-soft p-5 md:p-6">
-      <h2 className="text-accent font-bold text-lg">Filtering</h2>
+      <h2 className="text-accent font-bold text-lg">Filtrowanie</h2>
 
       <div className="mt-5">
         <label
           htmlFor={idQ}
           className="text-sm font-semibold text-neutral-800"
         >
-          Search (Author / Title)
+          Wyszukaj (Autor / Tytuł)
         </label>
         <div className="mt-2 flex items-stretch rounded-[10px] border border-neutral-200 bg-white overflow-hidden focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15">
           <span
@@ -31,7 +31,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
             id={idQ}
             type="search"
             className="flex-1 bg-transparent py-2.5 pr-3 text-sm outline-none placeholder:text-neutral-400"
-            placeholder="e.g., Study…"
+            placeholder="np. Studium…"
             value={filters.query}
             onChange={(e) => update({ query: e.target.value })}
           />
@@ -43,7 +43,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           htmlFor={idS}
           className="text-sm font-semibold text-neutral-800"
         >
-          Semester
+          Semestr
         </label>
         <select
           id={idS}
@@ -51,10 +51,10 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           value={filters.semester}
           onChange={(e) => update({ semester: e.target.value })}
         >
-          <option value="all">All</option>
+          <option value="all">Wszystkie</option>
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <option key={n} value={n}>
-              Semester {n}
+              Semestr {n}
             </option>
           ))}
         </select>
@@ -65,7 +65,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           htmlFor={idI}
           className="text-sm font-semibold text-neutral-800"
         >
-          Instructor
+          Prowadzący
         </label>
         <select
           id={idI}
@@ -73,7 +73,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           value={filters.instructor}
           onChange={(e) => update({ instructor: e.target.value })}
         >
-          <option value="all">All</option>
+          <option value="all">Wszyscy</option>
           {lecturers.map((l) => (
             <option key={l.id} value={l.id}>
               {l.degree} {l.firstName} {l.lastName}
@@ -87,7 +87,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           htmlFor={idT}
           className="text-sm font-semibold text-neutral-800"
         >
-          Execution Technique
+          Technika wykonania
         </label>
         <select
           id={idT}
@@ -95,7 +95,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
           value={filters.technique}
           onChange={(e) => update({ technique: e.target.value })}
         >
-          <option value="all">All</option>
+          <option value="all">Wszystkie</option>
           {['Pencil', 'Charcoal', 'Ink', 'Graphite', 'Pastel', 'Sepia', 'Mixed Media', 'Conte'].map(
             (t) => (
               <option key={t} value={t}>
@@ -113,7 +113,7 @@ export default function FilterSidebar({ filters, onChange, lecturers }) {
         }
         className="mt-6 w-full text-sm font-semibold text-neutral-600 hover:text-accent transition-colors"
       >
-        Reset filters
+        Resetuj filtry
       </button>
     </aside>
   );
