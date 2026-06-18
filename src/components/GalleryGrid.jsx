@@ -9,8 +9,7 @@ export default function GalleryGrid({ drawings }) {
     return (
       <div className="bg-white border border-dashed border-neutral-300 rounded-2xl p-10 text-center">
         <p className="text-neutral-500">
-          No works match the selected filters. Try changing the criteria or
-          resetting the filters.
+          Nie odnaleziono wyników pasujących do wybranych filtrów. Spróbuj zmienić kryterium lub zresetować filtr.
         </p>
       </div>
     );
