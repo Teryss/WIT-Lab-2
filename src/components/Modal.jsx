@@ -31,7 +31,7 @@ export default function Modal({ open, onClose, children, size = 'md' }) {
     >
       <button
         type="button"
-        aria-label="Close"
+        aria-label="Zamknij"
         onClick={onClose}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
@@ -43,7 +43,7 @@ export default function Modal({ open, onClose, children, size = 'md' }) {
           type="button"
           onClick={onClose}
           className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow-soft inline-flex items-center justify-center"
-          aria-label="Close dialog"
+          aria-label="Zamknij okno"
         >
           <X size={20} />
         </button>
