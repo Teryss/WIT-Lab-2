@@ -4,9 +4,9 @@ import { Menu, X } from 'lucide-react';
 import MobileNav from './MobileNav';
 
 const LINKS = [
-  { to: '/about', label: 'About the Workshop' },
-  { to: '/lecturers', label: 'Lecturers' },
-  { to: '/gallery', label: 'Work Archive' },
+  { to: '/about', label: 'O pracowni' },
+  { to: '/lecturers', label: 'Prowadzący' },
+  { to: '/gallery', label: 'Archiwum prac' },
 ];
 
 export default function Navbar() {
@@ -20,7 +20,7 @@ export default function Navbar() {
           <Link
             to="/"
             className="font-extrabold tracking-[0.18em] text-neutral-900 text-sm md:text-base"
-            aria-label="Akademia WIT — Drawing Gallery home"
+            aria-label="Akademia WIT — strona główna galerii rysunku"
             onClick={() => setOpen(false)}
           >
             LOGO
@@ -44,7 +44,7 @@ export default function Navbar() {
             type="button"
             onClick={() => setOpen(true)}
             className="md:hidden inline-flex items-center justify-center w-10 h-10 -mr-2 text-neutral-900"
-            aria-label="Open menu"
+            aria-label="Otwórz menu"
           >
             <Menu size={26} strokeWidth={2.2} />
           </button>
