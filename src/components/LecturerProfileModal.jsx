@@ -59,7 +59,7 @@ export default function LecturerProfileModal({ lecturer, open, onClose }) {
           <p className="mt-1 text-accent font-semibold">{lecturer.position}</p>
 
           <div className="mt-6">
-            <p className="text-sm font-bold text-neutral-900">Description</p>
+            <p className="text-sm font-bold text-neutral-900">Opis:</p>
             <p className="mt-2 text-neutral-700 leading-relaxed">{lecturer.bio}</p>
           </div>
 
@@ -94,11 +94,11 @@ export default function LecturerProfileModal({ lecturer, open, onClose }) {
             >
               {copied ? (
                 <>
-                  <Check size={16} className="mr-2" /> Link copied
+                  <Check size={16} className="mr-2" /> Link skopiowany
                 </>
               ) : (
                 <>
-                  <Share2 size={16} className="mr-2" /> Share
+                  <Share2 size={16} className="mr-2" /> Udostępnij
                 </>
               )}
             </button>
