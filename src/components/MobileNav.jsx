@@ -13,7 +13,7 @@ export default function MobileNav({ open, onClose, links }) {
           type="button"
           onClick={onClose}
           className="w-10 h-10 -mr-2 inline-flex items-center justify-center"
-          aria-label="Close menu"
+          aria-label="Zamknij menu"
         >
           <X size={26} strokeWidth={2.2} />
         </button>
