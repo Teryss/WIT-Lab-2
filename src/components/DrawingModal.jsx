@@ -49,13 +49,12 @@ export default function DrawingModal({ drawing, open, onClose }) {
     >
       <div className="grid lg:grid-cols-[1.4fr,1fr]">
         <div className="bg-canvas-muted p-4 md:p-6 relative">
-          {/* Toolbar — pushed left of the modal's close button so the two
-              never collide on narrow viewports. */}
+          {/* Toolbar */}
           <div className="absolute top-3 right-14 sm:right-3 z-10 flex items-center gap-2">
             <button
               type="button"
               onClick={viewer.actions.zoomOut}
-              aria-label="Zoom out"
+              aria-label="Pomniejsz"
               className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-soft inline-flex items-center justify-center"
             >
               <ZoomOut size={16} />
@@ -63,7 +62,7 @@ export default function DrawingModal({ drawing, open, onClose }) {
             <button
               type="button"
               onClick={viewer.actions.zoomIn}
-              aria-label="Zoom in"
+              aria-label="Powiększ"
               className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-soft inline-flex items-center justify-center"
             >
               <ZoomIn size={16} />
@@ -71,7 +70,7 @@ export default function DrawingModal({ drawing, open, onClose }) {
             <button
               type="button"
               onClick={viewer.actions.rotate}
-              aria-label="Rotate 90°"
+              aria-label="Obróć o 90°"
               className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-soft inline-flex items-center justify-center"
             >
               <RotateCw size={15} />
@@ -79,21 +78,20 @@ export default function DrawingModal({ drawing, open, onClose }) {
             <button
               type="button"
               onClick={viewer.actions.reset}
-              aria-label="Reset view"
+              aria-label="Resetuj widok"
               className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-soft inline-flex items-center justify-center"
             >
               <Maximize2 size={14} />
             </button>
           </div>
 
-          {/* Viewer surface — captures wheel/pointer events. */}
           <div
             ref={viewer.containerCallbackRef}
             {...viewer.handlers}
             className="relative overflow-hidden max-h-[70vh] h-[60vh] lg:h-[70vh] bg-white rounded-xl border border-neutral-200 touch-none select-none"
             style={{ cursor: viewer.cursor }}
             role="img"
-            aria-label={`Zoomable scan: ${drawing.title}`}
+            aria-label={`Podgląd rysunku: ${drawing.title}`}
           >
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -111,13 +109,13 @@ export default function DrawingModal({ drawing, open, onClose }) {
 
             {scale <= 1.01 ? (
               <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-wider text-neutral-500 bg-white/80 px-2 py-1 rounded-full pointer-events-none">
-                Drag to pan · scroll or pinch to zoom
+                Przeciągnij, aby przesunąć · przewiń lub szczypnij, aby powiększyć
               </p>
             ) : null}
           </div>
 
           <p className="text-xs text-neutral-400 mt-2 text-center">
-            Zoom: {Math.round(scale * 100)}% · Rotation: {rot}°
+            Powiększenie: {Math.round(scale * 100)}% · Obrót: {rot}°
           </p>
         </div>
 
@@ -134,17 +132,17 @@ export default function DrawingModal({ drawing, open, onClose }) {
 
           <dl className="mt-6 space-y-4 text-sm">
             <div>
-              <dt className="font-bold text-neutral-900">Technique</dt>
+              <dt className="font-bold text-neutral-900">Technika</dt>
               <dd className="text-neutral-700">
                 {drawing.technique} ({drawing.techniqueLabel})
               </dd>
             </div>
             <div>
-              <dt className="font-bold text-neutral-900">Semester</dt>
-              <dd className="text-neutral-700">Semester {drawing.semester}</dd>
+              <dt className="font-bold text-neutral-900">Semestr</dt>
+              <dd className="text-neutral-700">Semestr {drawing.semester}</dd>
             </div>
             <div>
-              <dt className="font-bold text-neutral-900">Instructor</dt>
+              <dt className="font-bold text-neutral-900">Prowadzący</dt>
               <dd className="text-neutral-700">{drawing.supervisor}</dd>
             </div>
           </dl>
@@ -157,11 +155,11 @@ export default function DrawingModal({ drawing, open, onClose }) {
             >
               {copied ? (
                 <>
-                  <Check size={16} className="mr-2" /> Link copied
+                  <Check size={16} className="mr-2" /> Skopiowano link
                 </>
               ) : (
                 <>
-                  <Share2 size={16} className="mr-2" /> Share
+                  <Share2 size={16} className="mr-2" /> Udostępnij
                 </>
               )}
             </button>
@@ -171,3 +169,4 @@ export default function DrawingModal({ drawing, open, onClose }) {
     </Modal>
   );
 }
+``
