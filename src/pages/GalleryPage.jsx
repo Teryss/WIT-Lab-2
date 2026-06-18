@@ -37,16 +37,16 @@ export default function GalleryPage() {
       <div className="flex items-end justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-900">
-            Drawing Gallery
+            Galeria rysunku
           </h1>
           <p className="mt-2 text-neutral-500 max-w-2xl">
-            Browse the archive. Use the filters to find works by semester,
-            supervisor, or technique.
+            Przeglądaj archiwum. Skorzystaj z filtrów, aby znaleźć prace według semestru,
+            prowadzącego lub techniki.
           </p>
         </div>
         <div className="text-sm text-neutral-500">
-          Showing <span className="font-semibold text-neutral-900">{filtered.length}</span>{' '}
-          of {DRAWINGS.length}
+          Wyświetlanie <span className="font-semibold text-neutral-900">{filtered.length}</span>{' '}
+          z {DRAWINGS.length}
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function GalleryPage() {
           onClick={() => setDrawerOpen((v) => !v)}
           className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-5 py-3 text-sm font-semibold text-neutral-800 shadow-soft"
         >
-          <Filter size={16} /> {drawerOpen ? 'Hide filters' : 'Show filters'}
+          <Filter size={16} /> {drawerOpen ? 'Ukryj filtry' : 'Pokaż filtry'}
         </button>
       </div>
 
